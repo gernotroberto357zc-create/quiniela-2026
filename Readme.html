@@ -1,0 +1,42 @@
+<h2>📌 Descripción General</h2>
+<p>La <strong>Quiniela Mundial 2026</strong> es una plataforma web full-stack diseñada para la gestión de apuestas deportivas amistosas. Permite la participación de usuarios en tiempo real, con un sistema de puntos automatizado y un panel de control para la administración de resultados.</p>
+
+<h2>🛠️ Stack Tecnológico</h2>
+<div class="tech-section">
+    <h3>Frontend (Interfaz de Usuario)</h3>
+    <span class="badge">React 18</span>
+    <span class="badge">Vite</span>
+    <span class="badge">Tailwind CSS</span>
+    <span class="badge">Lucide Icons</span>
+</div>
+<div class="tech-section">
+    <h3>Backend & Database (Infraestructura)</h3>
+    <span class="badge">Supabase (BaaS)</span>
+    <span class="badge">PostgreSQL</span>
+    <span class="badge">SQL Triggers</span>
+    <span class="badge">Row Level Security</span>
+</div>
+
+<h2>📂 Estructura del Proyecto</h2>
+<ul>
+    <li><strong>/src/lib/supabase.js:</strong> Configuración del cliente para la conexión con el backend.</li>
+    <li><strong>/src/App.jsx:</strong> Componente principal que contiene la lógica de navegación, vistas de partidos y ranking.</li>
+    <li><strong>Tablas en Supabase:</strong>
+        <ul>
+            <li><code>partidos</code>: Datos de los encuentros y resultados oficiales.</li>
+            <li><code>pronosticos</code>: Votos de los usuarios (Relación 1:N con usuarios).</li>
+        </ul>
+    </li>
+</ul>
+
+<h2>🔐 Seguridad y Lógica de Negocio</h2>
+<p>El proyecto implementa medidas de seguridad críticas:</p>
+<ul>
+    <li><strong>Protección de Apuestas:</strong> Los usuarios no pueden votar en partidos cuya fecha/hora sea anterior a la actual.</li>
+    <li><strong>Integridad de Datos:</strong> Se utilizan políticas RLS en Supabase para asegurar que un usuario solo pueda insertar o modificar sus propios pronósticos.</li>
+    <li><strong>Cómputo en Servidor:</strong> El ranking se calcula mediante una función SQL almacenada para evitar manipulaciones en el cliente.</li>
+</ul>
+
+<h2>🚀 Despliegue</h2>
+<p>El flujo de trabajo está automatizado mediante Git y Vercel:</p>
+<div class="code-block">
