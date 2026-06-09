@@ -153,7 +153,7 @@ function App() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <form className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-slate-100">
-          <h1 className="text-2xl font-black mb-6 text-center text-blue-700">Quiniela Mundial 2026</h1>
+          <h1 className="text-2xl font-black mb-6 text-center text-blue-700">Mundial 2026</h1>
 
           <input
             type="text"
