@@ -127,6 +127,14 @@ function App() {
   // --- NUEVA LÓGICA DE REGISTRO CON NOMBRE ---
   const handleRegister = async (e) => {
     e.preventDefault()
+
+    // 1. EL CANDADO DE FECHA
+    const FECHA_INICIO = new Date('2026-06-11T19:00:00');
+    if (new Date() >= FECHA_INICIO) {
+      alert("¡Inscripciones cerradas! El Mundial ya ha comenzado y no se admiten nuevos jugadores.");
+      return; // Detenemos la ejecución aquí
+    }
+    
     if (!nombre) {
       alert("Por favor, escribe un Nombre o Alias antes de registrarte.")
       return
