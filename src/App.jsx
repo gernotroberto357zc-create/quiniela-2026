@@ -18,11 +18,11 @@ function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [partidos, setPartidos] = useState([])
-  const [misVotos, setMisVotos] = useState({}) // <-- Nuevo estado para guardar los votos
+  const [misVotos, setMisVotos] = useState({}) 
   const [loading, setLoading] = useState(true)
   const [nombre, setNombre] = useState('')
   const [modoAdmin, setModoAdmin] = useState(false)
-  const [vistaActiva, setVistaActiva] = useState('partidos') // 'partidos' o 'ranking'
+  const [vistaActiva, setVistaActiva] = useState('partidos') 
   const [ranking, setRanking] = useState([])
 
   useEffect(() => {
@@ -35,7 +35,6 @@ function App() {
     getPartidos()
   }, [])
 
-  // Cargar las predicciones del usuario cuando inicia sesión
   useEffect(() => {
     if (session) {
       getMisVotos()
@@ -54,7 +53,6 @@ function App() {
     setLoading(false)
   }
 
-  // --- NUEVA FUNCIÓN: TRAER LOS VOTOS GUARDADOS ---
   async function getMisVotos() {
     const { data, error } = await supabase.from('pronosticos').select('partido_id, prediccion').eq('user_id', session.user.id)
     if (!error && data) {
@@ -70,7 +68,6 @@ function App() {
     else setRanking(data)
   }
 
-  // --- LÓGICA DE TIEMPO Y BLOQUEO ---
   const partidoIniciado = (fecha) => {
     return new Date(fecha) < new Date();
   }
@@ -79,20 +76,14 @@ function App() {
     return new Date(fecha).toLocaleString('es-ES', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
-  // --- FUNCIÓN ACTUALIZADA: PERMITE CAMBIAR SELECCIÓN ---
   async function handleVoto(partidoId, prediccion, fechaPartido) {
-
-    // 1. BARRERA DE TIEMPO: No permitir votar ni modificar si ya empezó
     if (partidoIniciado(fechaPartido)) {
       alert("¡Tiempo agotado! Este partido ya empezó o terminó.");
       return;
     }
 
-    // 2. ACTUALIZACIÓN VISUAL: Quitamos el "if (misVotos[partidoId]) return" 
-    // para que el estado se actualice siempre con la nueva predicción.
     setMisVotos(prev => ({ ...prev, [partidoId]: prediccion }));
 
-    // 3. GUARDADO: Usamos 'upsert' para que si el voto ya existe, lo sobrescriba
     const { error } = await supabase
       .from('pronosticos')
       .upsert({
@@ -100,7 +91,6 @@ function App() {
         partido_id: partidoId,
         prediccion: prediccion
       }, {
-        // Esto le dice a Supabase qué columnas buscar para saber si es una actualización
         onConflict: 'user_id, partido_id'
       });
 
@@ -109,30 +99,27 @@ function App() {
       alert("Error al guardar tu voto: " + error.message);
     }
   }
-  // --- NUEVA FUNCIÓN: GUARDAR RESULTADO OFICIAL (SOLO ADMIN) ---
+
   async function handleResultadoOficial(partidoId, resultadoReal) {
-    // 1. Actualizamos el estado local (pantalla)
     setPartidos(prev => prev.map(p => p.id === partidoId ? { ...p, resultado_real: resultadoReal } : p))
 
-    // 2. Guardamos en la base de datos
     const { error } = await supabase.from('partidos').update({ resultado_real: resultadoReal }).eq('id', partidoId)
     if (error) alert("Error de Admin: " + error.message)
   }
+
   const handleLogin = async (e) => {
     e.preventDefault()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) alert("Error al entrar: " + error.message)
   }
 
-  // --- NUEVA LÓGICA DE REGISTRO CON NOMBRE ---
   const handleRegister = async (e) => {
     e.preventDefault()
 
-    // 1. EL CANDADO DE FECHA
     const FECHA_INICIO = new Date('2026-06-11T19:00:00');
     if (new Date() >= FECHA_INICIO) {
       alert("¡Inscripciones cerradas! El Mundial ya ha comenzado y no se admiten nuevos jugadores.");
-      return; // Detenemos la ejecución aquí
+      return; 
     }
     
     if (!nombre) {
@@ -143,7 +130,7 @@ function App() {
       email,
       password,
       options: {
-        data: { nombre: nombre } // Aquí guardamos el alias en Supabase
+        data: { nombre: nombre } 
       }
     })
     if (error) alert("Error al registrar: " + error.message)
@@ -186,25 +173,25 @@ function App() {
 
   const isAdmin = session.user.email === ADMIN_EMAIL;
 
-  // SOLUCIÓN BOTE: Protegemos la variable por si ranking no ha cargado aún
   const listaRanking = ranking || [];
   const boteAcumulado = ranking.length * 20;
 
-  // Función auxiliar para pintar los botones de colores si están seleccionados
+  // NUEVO DISEÑO DE BOTONES MÁS ANCHOS PARA ACOMODAR NOMBRES DE EQUIPOS
   const getButtonClass = (partidoId, valorBoton, fechaPartido) => {
     const votoRealizado = misVotos[partidoId];
     const isSelected = votoRealizado === valorBoton;
     const empezo = partidoIniciado(fechaPartido);
+    const baseClass = 'flex-1 py-3 px-2 shadow-sm rounded-lg font-bold text-xs sm:text-sm transition-all border leading-tight ';
 
-    if (isSelected) return 'w-10 h-10 shadow-sm rounded-md font-black bg-blue-600 text-white border-blue-600 border cursor-default';
-    if (votoRealizado && !isSelected) return 'w-10 h-10 shadow-sm rounded-md font-black bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed opacity-50';
-    if (empezo && !isAdmin) return 'w-10 h-10 shadow-sm rounded-md font-black bg-slate-100 text-slate-300 border border-slate-200 cursor-not-allowed opacity-50';
-    return 'w-10 h-10 shadow-sm rounded-md font-black bg-white text-slate-400 hover:bg-blue-100 hover:text-blue-600 border border-slate-100 transition-colors';
+    if (isSelected) return baseClass + 'bg-blue-600 text-white border-blue-600 cursor-default ring-2 ring-blue-600/30';
+    if (votoRealizado && !isSelected) return baseClass + 'bg-slate-50 text-slate-400 border-slate-100 cursor-not-allowed opacity-60';
+    if (empezo && !isAdmin) return baseClass + 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60';
+    return baseClass + 'bg-white text-slate-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border-slate-200';
   }
 
-  // Estilos especiales para los botones del Administrador
   const getAdminButtonClass = (resultadoOficial, valorBoton) => {
-    return `w-10 h-10 shadow-sm rounded-md font-black transition-colors border ${resultadoOficial === valorBoton ? 'bg-green-500 text-white border-green-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`;
+    const baseClass = 'flex-1 py-3 px-2 shadow-sm rounded-lg font-bold text-xs sm:text-sm transition-all border leading-tight ';
+    return baseClass + (resultadoOficial === valorBoton ? 'bg-green-500 text-white border-green-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700');
   }
 
   const partidosPorGrupo = partidos.reduce((acc, p) => {
@@ -225,7 +212,6 @@ function App() {
           <button onClick={() => supabase.auth.signOut()} className="text-sm font-bold text-red-500 hover:text-red-700">Cerrar Sesión</button>
         </div>
 
-        {/* BLOQUE DE USUARIO Y BOTE DE PREMIOS */}
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200">
             <p className="text-slate-600">Jugador: <b className="text-slate-900">{nombreUsuario}</b></p>
@@ -235,17 +221,13 @@ function App() {
               </button>
             )}
           </div>
-
-
         </div>
-
 
         <div className="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200 mb-6">
           <button onClick={() => { setVistaActiva('partidos'); setModoAdmin(false); }} className={`flex-1 py-3 rounded-lg font-bold text-sm transition-colors ${vistaActiva === 'partidos' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}>⚽ Partidos</button>
           <button onClick={() => { setVistaActiva('ranking'); setModoAdmin(false); }} className={`flex-1 py-3 rounded-lg font-bold text-sm transition-colors ${vistaActiva === 'ranking' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}>🏆 Ranking</button>
         </div>
 
-        {/* VISTA: RANKING */}
       {vistaActiva === 'ranking' && (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-[2px] rounded-2xl shadow-lg">
@@ -276,7 +258,6 @@ function App() {
         </div>
       )}
 
-        {/* VISTA: PARTIDOS */}
         {vistaActiva === 'partidos' && (
           <div className="space-y-12">
             {['Grupos', 'Dieciseisavos', 'Octavos', 'Cuartos', 'Semifinal', 'Final'].map(faseActual => {
@@ -285,7 +266,6 @@ function App() {
 
               return (
                 <div key={faseActual} className="animate-fade-in">
-                  {/* CABECERA DE FASE */}
                   <div className="flex justify-between items-center mb-4 border-b-2 border-blue-100 pb-2">
                     <h2 className="text-xl font-black text-blue-900 uppercase tracking-wider">
                       {faseActual === 'Grupos' ? '⚽ Fase de Grupos' : `🏆 ${faseActual}`}
@@ -299,7 +279,6 @@ function App() {
                     {partidosFase.map((p) => (
                       <div key={p.id} className={`${modoAdmin ? 'bg-slate-900 text-white' : 'bg-white'} p-4 rounded-xl shadow-sm border ${modoAdmin ? 'border-slate-700' : 'border-slate-100'} flex flex-col gap-3`}>
 
-                        {/* INFO SUPERIOR */}
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{p.grupo}</span>
                           {p.resultado_real ? (
@@ -311,23 +290,21 @@ function App() {
                           )}
                         </div>
 
-                        {/* CONTROLES DE VOTO / ADMIN */}
-                        <div className="flex justify-between items-center gap-2">
-                          <span className={`font-bold flex-1 text-right text-sm ${modoAdmin ? 'text-slate-200' : 'text-slate-700'}`}>{p.local}</span>
-
-                          <div className={`flex gap-1 p-1 rounded-lg ${modoAdmin ? 'bg-slate-800' : 'bg-slate-50'}`}>
-                            {['1', 'X', '2'].map((opcion) => (
-                              <button
-                                key={opcion}
-                                onClick={() => modoAdmin ? handleResultadoOficial(p.id, opcion) : handleVoto(p.id, opcion, p.fecha)}
-                                className={modoAdmin ? getAdminButtonClass(p.resultado_real, opcion) : getButtonClass(p.id, opcion, p.fecha)}
-                              >
-                                {opcion}
-                              </button>
-                            ))}
-                          </div>
-
-                          <span className={`font-bold flex-1 text-left text-sm ${modoAdmin ? 'text-slate-200' : 'text-slate-700'}`}>{p.visitante}</span>
+                        {/* NUEVO DISEÑO: Botones anchos con los nombres directamente */}
+                        <div className={`flex w-full gap-2 p-1.5 rounded-xl ${modoAdmin ? 'bg-slate-800' : 'bg-slate-100/80'}`}>
+                          {[
+                            { valor: '1', etiqueta: p.local },
+                            { valor: 'X', etiqueta: 'Empate' },
+                            { valor: '2', etiqueta: p.visitante }
+                          ].map((opcion) => (
+                            <button
+                              key={opcion.valor}
+                              onClick={() => modoAdmin ? handleResultadoOficial(p.id, opcion.valor) : handleVoto(p.id, opcion.valor, p.fecha)}
+                              className={modoAdmin ? getAdminButtonClass(p.resultado_real, opcion.valor) : getButtonClass(p.id, opcion.valor, p.fecha)}
+                            >
+                              {opcion.etiqueta}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     ))}
