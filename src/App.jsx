@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 
-const ADMIN_EMAIL = 'gernot_roberto357zc@hotmail.com'
+const ADMIN_EMAIL = [ 
+  'gernot_roberto357zc@hotmail.com', 
+  'linserrebecca@gmail.com'
+  
+  ];
 
 function App() {
 
@@ -171,7 +175,7 @@ function App() {
 
   if (loading) return <div className="p-10 text-center font-bold text-slate-400">Cargando mundial...</div>
 
-  const isAdmin = session.user.email === ADMIN_EMAIL;
+  const isAdmin = ADMIN_EMAIL.includes(session.user.email);;
 
   const listaRanking = ranking || [];
   const boteAcumulado = ranking.length * 20;
