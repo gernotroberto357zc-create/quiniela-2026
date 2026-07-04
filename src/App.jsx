@@ -20,7 +20,7 @@ function App() {
   };
 
   // 3. FECHA LÍMITE GLOBAL (19:00 Hora Peninsular Española - 4 de Julio)
-  const FECHA_LIMITE = new Date('2026-07-05T19:00:00+02:00');
+  const FECHA_LIMITE = new Date('2026-07-04T19:00:00+02:00');
 
   // 4. ESTADOS DE LA APLICACIÓN
   const [session, setSession] = useState(null) 
