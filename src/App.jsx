@@ -246,7 +246,7 @@ function App() {
       <div className="max-w-2xl mx-auto">
 
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-black text-blue-700 uppercase">Mundial 2026</h1>
+          <h1 className="text-3xl font-black text-red-700 uppercase">Mundial 2026</h1>
           <button onClick={() => supabase.auth.signOut()} className="text-sm font-bold text-red-500 hover:text-red-700">Cerrar Sesión</button>
         </div>
 
