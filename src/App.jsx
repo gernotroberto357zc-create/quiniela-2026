@@ -19,8 +19,8 @@ function App() {
     'Final': 6
   };
 
-  // 3. FECHA LÍMITE GLOBAL (19:00 Hora Peninsular Española - 4 de Julio)
-  const FECHA_LIMITE = new Date('2026-07-04T19:00:00+02:00');
+  // 3. FECHA LÍMITE GLOBAL (22:00 Hora Peninsular Española - 9 de Julio)
+  const FECHA_LIMITE = new Date('2026-07-09T22:00:00+02:00');
 
   // 4. ESTADOS DE LA APLICACIÓN
   const [session, setSession] = useState(null) 
@@ -125,7 +125,7 @@ function App() {
   // 11. FUNCIÓN PRINCIPAL: VOTAR
   async function handleVoto(partidoId, prediccion) {
     if (votacionCerrada) {
-      alert("¡Tiempo agotado! Las votaciones para esta fase se han cerrado a las 19:00h.");
+      alert("¡Tiempo agotado! Las votaciones para esta fase se han cerrado a las 22:00h.");
       return;
     }
 
@@ -186,7 +186,7 @@ function App() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <form className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-slate-100">
-          <h1 className="text-2xl font-black mb-6 text-center text-blue-700">Mundial 2026</h1>
+          <h1 className="text-2xl font-black mb-6 text-center text-red-700">Mundial 2026</h1>
 
           <input
             type="text"
@@ -270,7 +270,7 @@ function App() {
             <p className="text-3xl font-black tabular-nums tracking-wider">
               {tiempoRestante || '00:00:00'}
             </p>
-            {!votacionCerrada && <p className="text-[10px] mt-1 opacity-70">Hoy a las 19:00h (Hora España)</p>}
+            {!votacionCerrada && <p className="text-[10px] mt-1 opacity-70">Hoy a las 22:00h (Hora España)</p>}
           </div>
         )}
 
@@ -312,8 +312,8 @@ function App() {
         {vistaActiva === 'partidos' && (
           <div className="space-y-12">
             
-            {/* Ahora mapeamos y mostramos la fase de 'Octavos' */}
-            {['Octavos'].map(faseActual => {
+            {/* Ahora mapeamos y mostramos la fase de 'Cuartos' */}
+            {['Cuartos'].map(faseActual => {
               const partidosFase = partidos.filter(p => p.fase === faseActual);
               if (partidosFase.length === 0) return null;
 
@@ -331,7 +331,6 @@ function App() {
                   <div className="grid gap-4">
                     {partidosFase.map((p) => {
                       
-                      // Recuperado: lógica para renderizar los nombres de los usuarios debajo de sus votos
                       const votosDeEstePartido = todosLosVotos.filter(v => v.partido_id === p.id);
                       const apostaronLocal = votosDeEstePartido.filter(v => v.prediccion === '1').map(v => v.nombre);
                       const apostaronVisitante = votosDeEstePartido.filter(v => v.prediccion === '2').map(v => v.nombre);
@@ -340,8 +339,8 @@ function App() {
                         <div key={p.id} className={`${modoAdmin ? 'bg-slate-900 text-white' : 'bg-white'} p-4 rounded-xl shadow-sm border ${modoAdmin ? 'border-slate-700' : 'border-slate-100'} flex flex-col gap-3`}>
 
                           <div className="flex justify-between items-center">
-                            {/* Modificado a "Avanza a Cuartos" */}
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avanza a Cuartos</span>
+                            {/* Modificado a "Avanza a Semifinales" */}
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avanza a Semifinales</span>
                             {p.resultado_real ? (
                               <div className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded">FINALIZADO ({p.resultado_real})</div>
                             ) : votacionCerrada ? (
@@ -366,7 +365,6 @@ function App() {
                             ))}
                           </div>
 
-                          {/* Recuperado: Recuadro con la lista de nombres y sus predicciones */}
                           <div className="mt-1 text-[11px] border-t border-slate-100 pt-2 flex flex-col gap-1.5 bg-slate-50/50 p-2 rounded-lg">
                             {apostaronLocal.length > 0 && (
                               <p className="text-slate-600 leading-relaxed">
