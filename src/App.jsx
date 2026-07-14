@@ -19,8 +19,8 @@ function App() {
     'Final': 6
   };
 
-  // 3. FECHA LÍMITE GLOBAL (22:00 Hora Peninsular Española - 9 de Julio)
-  const FECHA_LIMITE = new Date('2026-07-09T22:00:00+02:00');
+  // 3. FECHA LÍMITE GLOBAL (21:00 Hora Peninsular Española - 14 de Julio)
+  const FECHA_LIMITE = new Date('2026-07-14T21:00:00+02:00');
 
   // 4. ESTADOS DE LA APLICACIÓN
   const [session, setSession] = useState(null) 
@@ -125,7 +125,7 @@ function App() {
   // 11. FUNCIÓN PRINCIPAL: VOTAR
   async function handleVoto(partidoId, prediccion) {
     if (votacionCerrada) {
-      alert("¡Tiempo agotado! Las votaciones para esta fase se han cerrado a las 22:00h.");
+      alert("¡Tiempo agotado! Las votaciones para esta fase se han cerrado a las 21:00h.");
       return;
     }
 
@@ -270,7 +270,7 @@ function App() {
             <p className="text-3xl font-black tabular-nums tracking-wider">
               {tiempoRestante || '00:00:00'}
             </p>
-            {!votacionCerrada && <p className="text-[10px] mt-1 opacity-70">Hoy a las 22:00h (Hora España)</p>}
+            {!votacionCerrada && <p className="text-[10px] mt-1 opacity-70">Hoy a las 21:00h (Hora España)</p>}
           </div>
         )}
 
@@ -312,8 +312,8 @@ function App() {
         {vistaActiva === 'partidos' && (
           <div className="space-y-12">
             
-            {/* Ahora mapeamos y mostramos la fase de 'Cuartos' */}
-            {['Cuartos'].map(faseActual => {
+            {/* Ahora mapeamos y mostramos la fase de 'Semifinal' */}
+            {['Semifinal'].map(faseActual => {
               const partidosFase = partidos.filter(p => p.fase === faseActual);
               if (partidosFase.length === 0) return null;
 
@@ -339,8 +339,8 @@ function App() {
                         <div key={p.id} className={`${modoAdmin ? 'bg-slate-900 text-white' : 'bg-white'} p-4 rounded-xl shadow-sm border ${modoAdmin ? 'border-slate-700' : 'border-slate-100'} flex flex-col gap-3`}>
 
                           <div className="flex justify-between items-center">
-                            {/* Modificado a "Avanza a Semifinales" */}
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avanza a Semifinales</span>
+                            {/* Modificado a "Avanza a la Final" */}
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avanza a la Final</span>
                             {p.resultado_real ? (
                               <div className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded">FINALIZADO ({p.resultado_real})</div>
                             ) : votacionCerrada ? (
