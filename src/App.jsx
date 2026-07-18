@@ -18,7 +18,7 @@ function App() {
     'Final': 7
   };
 
-  const FECHA_LIMITE = new Date('2026-07-18T21:00:00+02:00');
+  const FECHA_LIMITE = new Date('2026-07-18T23:00:00+02:00');
 
   const [session, setSession] = useState(null) 
   const [email, setEmail] = useState('') 
