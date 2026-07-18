@@ -14,8 +14,8 @@ function App() {
     'Octavos': 3,
     'Cuartos': 4,
     'Semifinal': 5,
-    'TercerLugar': 3,
-    'Final': 6
+    'TercerLugar': 6,
+    'Final': 7
   };
 
   const FECHA_LIMITE = new Date('2026-07-18T21:00:00+02:00');
