@@ -188,9 +188,25 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 selection:bg-amber-500 selection:text-white">
       <div className="max-w-2xl mx-auto">
         
-        <div className="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-2xl shadow-xl">
-          <h1 className="text-xl font-black uppercase text-amber-500">Mundial 2026</h1>
-          <button onClick={() => supabase.auth.signOut()} className="text-xs font-bold text-slate-400">Salir</button>
+        <div className="flex flex-col mb-6 bg-slate-900 p-4 rounded-2xl shadow-xl gap-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-black uppercase text-amber-500">Mundial 2026</h1>
+            <button onClick={() => supabase.auth.signOut()} className="text-xs font-bold text-slate-400 hover:text-white">Salir</button>
+          </div>
+          
+          {/* Panel de Admin - Solo visible para correos autorizados */}
+          {isAdmin && (
+            <button 
+              onClick={() => setModoAdmin(!modoAdmin)}
+              className={`py-2.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 ${
+                modoAdmin 
+                  ? 'bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.3)]' 
+                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white border border-slate-700'
+              }`}
+            >
+              {modoAdmin ? '🔴 Modo Admin: ACTIVADO (Asignando Ganadores)' : '⚙️ Activar Modo Admin'}
+            </button>
+          )}
         </div>
 
         {vistaActiva === 'partidos' && (
